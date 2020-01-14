@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://34.205.73.7:5432/postgres
+    username: docker
+    password: docker
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  batch:
+    initialize-schema: always
+    job:
+      enabled: true
