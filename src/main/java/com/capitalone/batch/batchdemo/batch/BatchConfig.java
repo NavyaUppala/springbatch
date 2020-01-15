@@ -20,6 +20,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.capitalone.batch.batchdemo.batch.processor.CustomeProcessor;
+import com.capitalone.batch.batchdemo.batch.reader.CustomJdbcPagingReader;
+import com.capitalone.batch.batchdemo.batch.writer.CustomPipeDelimitedWriter;
 import com.capitalone.batch.batchdemo.batch.writer.CustomWriter;
 import com.capitalone.batch.batchdemo.model.Guest;
 
@@ -43,14 +45,20 @@ public class BatchConfig {
 	private CustomWriter customWriter;
 	
 	@Autowired
+	private CustomPipeDelimitedWriter customPipeDelimitedWriter;
+	
+	@Autowired
 	private CustomeProcessor customeProcessor;
 	
+	@Autowired
+	private CustomJdbcPagingReader customJdbcPagingReader;
+	
 	@Bean
-	public Job job() {
+	public Job job1() {
 		return jobBuilderFactory.get("my-job")
 				.incrementer(new RunIdIncrementer())
 				.start(step1())
-				//.next(step2()) //reader -- jdbcpaging reader -- using feign we will make api calls -- added info to the database
+				.next(step2()) //reader -- jdbcpaging reader -- using feign we will make api calls -- added info to the database
 				.build();
 	}
 
@@ -61,6 +69,15 @@ public class BatchConfig {
 				.reader(reader())
 				.processor(customeProcessor)
 				.writer(customWriter)
+				.build();
+	}
+	
+	@Bean
+	public Step step2( ) {
+		return stepBuilderFactory.get("step2")
+				.<Guest, Guest>chunk(10)
+				.reader(customJdbcPagingReader.dbpagingReader())
+				.writer(customPipeDelimitedWriter.pipeDelimitedWriter())
 				.build();
 	}
 

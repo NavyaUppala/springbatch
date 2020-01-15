@@ -1,9 +1,14 @@
+jasypt:
+  encryptor:
+    password: abc123
+    
 spring:
-  datasource:
-    url: jdbc:postgresql://34.205.73.7:5432/postgres
-    username: docker
-    password: docker
+  datasource: 
+    url: jdbc:postgresql://database-1.covl14affxql.us-east-1.rds.amazonaws.com:5432/
+    username: postgres
+    password: ENC(7OYk8i2eshS7TatMDEpnZhzGfv/a8tO8)
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  
     hibernate:
       ddl-auto: update
     properties:
@@ -15,3 +20,6 @@ spring:
     initialize-schema: always
     job:
       enabled: true
+      
+output:
+  location: file:C:\\Users\\navyauppala\\git\\springbatch\\output\\female.txt   
