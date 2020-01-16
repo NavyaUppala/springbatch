@@ -19,7 +19,7 @@ spring:
   batch:
     initialize-schema: always
     job:
-      enabled: true
+      enabled: false
       
 output:
   location: file:C:\\Users\\navyauppala\\git\\springbatch\\output\\female.txt   

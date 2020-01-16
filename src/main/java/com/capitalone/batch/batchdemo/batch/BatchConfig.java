@@ -21,6 +21,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.capitalone.batch.batchdemo.batch.processor.CustomeProcessor;
 import com.capitalone.batch.batchdemo.batch.reader.CustomJdbcPagingReader;
+import com.capitalone.batch.batchdemo.batch.tasklet.CustomTasklet;
 import com.capitalone.batch.batchdemo.batch.writer.CustomPipeDelimitedWriter;
 import com.capitalone.batch.batchdemo.batch.writer.CustomWriter;
 import com.capitalone.batch.batchdemo.model.Guest;
@@ -53,12 +54,16 @@ public class BatchConfig {
 	@Autowired
 	private CustomJdbcPagingReader customJdbcPagingReader;
 	
+	@Autowired
+	private CustomTasklet customTasklet;
+	
 	@Bean
 	public Job job1() {
 		return jobBuilderFactory.get("my-job")
 				.incrementer(new RunIdIncrementer())
 				.start(step1())
-				.next(step2()) //reader -- jdbcpaging reader -- using feign we will make api calls -- added info to the database
+				.next(step2()) 
+				.next(stet3())
 				.build();
 	}
 
@@ -78,6 +83,13 @@ public class BatchConfig {
 				.<Guest, Guest>chunk(10)
 				.reader(customJdbcPagingReader.dbpagingReader())
 				.writer(customPipeDelimitedWriter.pipeDelimitedWriter())
+				.build();
+	}
+	
+	@Bean
+	public Step stet3( ) {
+		return stepBuilderFactory.get("clean-db")
+				.tasklet(customTasklet)
 				.build();
 	}
 
